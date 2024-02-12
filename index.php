@@ -1,3 +1,3 @@
 <?php
-echo "this file coming from git "
+echo "this by amit  "
 ?>
