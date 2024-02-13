@@ -1,111 +1,39 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Netex
- * Date: 2/22/16
- * Time: 1:26 PM
- */
 
-namespace Netex;
+// Define the endpoint for the API
+$endpoint = "/hello";
 
-class HelloWorldPHP
-{
-    const TOKEN_INPUT = 'Netex';
+// Define the expected token
+$expected_token = "kally";
 
-    public static $resultContent;
+// Get the path info
+$path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
 
-    public static $languages;
+// Get the token from the headers
+$headers = apache_request_headers();
+$token = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 
-    public static $toLanguage;
+// Check if the request is for the defined endpoint and if the token is correct
+if ($path_info === $endpoint) {
+    // Check if the token matches the expected token
+    if ($token === "Bearer " . $expected_token) {
+        // Set the response headers
+        header("Content-Type: application/json");
 
+        // Define the response array
+        $response = array(
+            "message" => "Hello, World!"
+        );
 
-    public static function construct()
-    {
-        self::$resultContent = array();
-        self::getLanguages();
-        self::checkInputData();
+        // Encode the response array into JSON format
+        echo json_encode($response);
+    } else {
+        // If the token is incorrect, return a 401 Unauthorized response
+        http_response_code(401);
+        echo json_encode(array("message" => "Unauthorized"));
     }
-
-    /**
-     *
-     * select all languages code from tables
-     */
-    protected function getLanguages()
-    {
-        self::$languages = '["arabic","bulgarian","catalan","chinese-simplified","chinese-traditional","czech","danish","dutch","english",
-                             "estonian","finnish","french","german","greek","haitian-creole","hebrew","hindi","hungarian","indonesian",
-                             "italian","japanese","klingon","korean","latvian","lithuanian","malay","maltese","norwegian","persian",
-                             "polish","portuguese","romanian","russian","slovak","slovenian","spanish","swedish","thai","turkish",
-                             "ukrainian","urdu","vietnamese","welsh"]';
-
-    }
-
-
-    /**
-     *
-     * check input GET data
-     */
-    protected function checkInputData()
-    {
-        if (count($_GET) == 0) {
-            self::setSuccessResultContent();
-        } else {
-            self::setErrorResultContent('Bad request', 'usageLimits');
-        }
-        self::getResultContent();
-    }
-
-
-    /**
-     * @param $message String;
-     * @param $reason String;
-     * set result content with error
-     * */
-    protected function setErrorResultContent($message, $reason)
-    {
-        http_response_code(400);
-        self::$resultContent['error']['errors']['reason'] = $reason;
-        self::$resultContent['error']['errors']['message'] = $message;
-        self::$resultContent['error']['code'] = '400';
-        self::$resultContent['error']['message'] = 'Bad request';
-
-    }
-
-
-    /**
-     * set result content with success
-     */
-    protected function setSuccessResultContent()
-    {
-        $content = file_get_contents("http://translate.reference.com/english/" . self::getLanguageTranslate() . "/hello-world/tSGVsbG8gV29ybGQ%3D");
-        preg_match('/placeholder="Translation".*<\//', $content, $result);
-        preg_match('/>.*</', $result[0], $resultWord);
-        $result = str_replace(">", "", $resultWord[0]);
-        $word = str_replace("<", "", $result);
-        http_response_code(200);
-        self::$resultContent['success']['message'] = 'success request';
-        self::$resultContent['success']['code'] = '200';
-        self::$resultContent['message'] = $word;
-    }
-
-    /**
-     * get language rand translate
-     */
-    protected function getLanguageTranslate()
-    {
-        $languageCodes = json_decode(self::$languages, true);
-        $languageTo = $languageCodes[array_rand($languageCodes)];
-        return $languageTo;
-    }
-
-    /**
-     * get result json content
-     */
-    protected function getResultContent()
-    {
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode(self::$resultContent, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    }
+} else {
+    // If the request is for an undefined endpoint, return a 404 response
+    http_response_code(404);
+    echo json_encode(array("message" => "Endpoint not found"));
 }
-
-\Netex\HelloWorldPHP::construct();
