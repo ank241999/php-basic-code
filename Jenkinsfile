@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     // Using PowerShell to invoke a web request
-                    powershell 'Invoke-WebRequest -Uri http://localhost/dashboard/index.php'
+                    powershell 'curl http://localhost/dashboard/index.php'
                 }
             }
         }
