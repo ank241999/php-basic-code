@@ -10,8 +10,8 @@ pipeline {
         stage('HIT URL') {
             steps {
                 script {
-                    // Using PowerShell to invoke a web request
-                    powershell 'curl http://localhost/dashboard/index.php'
+                    // Using PowerShell to invoke a web request with basic parsing
+                    powershell 'Invoke-WebRequest -Uri http://localhost/dashboard/index.php -UseBasicParsing'
                 }
             }
         }
