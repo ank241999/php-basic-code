@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('RUNNING PHP CODE') {
+        stage('Deployed PHP CODE') {
             steps {
                 // Copying files to XAMPP's htdocs directory
                 bat "xcopy * E:\\xampp-portable-windows-x64-7.2.34-2-VC15\\xampp\\htdocs\\dashboard /Y"
@@ -10,7 +10,7 @@ pipeline {
                 bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" -v"
             }
         }
-        stage('HIT URL') {
+        stage('Run postman collection') {
             steps {
                 script {
                     // Running Newman with the full path and specifying the collection JSON file
