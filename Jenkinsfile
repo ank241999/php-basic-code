@@ -4,15 +4,17 @@ pipeline {
     stages {
         stage('RUNNING PHP CODE') {
             steps {
+                // Copying files to XAMPP's htdocs directory
                 bat "xcopy * E:\\xampp-portable-windows-x64-7.2.34-2-VC15\\xampp\\htdocs\\dashboard /Y"
-                bat "newman -v"
+                // Checking Newman version to ensure it's accessible
+                bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" -v"
             }
         }
         stage('HIT URL') {
             steps {
                 script {
-                    // Using PowerShell to invoke a web request with basic parsing
-                    powershell 'Invoke-WebRequest -Uri http://localhost/dashboard/index.php -UseBasicParsing'
+                    // Running Newman with the full path and specifying the collection JSON file
+                    bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" run E:\\phpapi.postman_collection.json"
                 }
             }
         }
