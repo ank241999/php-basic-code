@@ -1,7 +1,11 @@
 <?php
 
-// Define the endpoint for the API
-$endpoint = "/hello";
+// Include the database connection file
+require 'db.php'; // Adjust the path as necessary
+
+// Define the endpoints for the API
+$helloEndpoint = "/hello";
+$usersEndpoint = "/users"; // New endpoint
 
 // Define the expected token
 $expected_token = "kally";
@@ -14,21 +18,33 @@ $headers = apache_request_headers();
 $token = isset($headers['Authorization']) ? $headers['Authorization'] : '';
 
 // Check if the request is for the defined endpoint and if the token is correct
-if ($path_info === $endpoint) {
-    // Check if the token matches the expected token
+if ($path_info === $helloEndpoint) {
     if ($token === "Bearer " . $expected_token) {
-        // Set the response headers
         header("Content-Type: application/json");
-
-        // Define the response array
-        $response = array(
-            "message" => "Hello, World!"
-        );
-
-        // Encode the response array into JSON format
-        echo json_encode($response);
+        echo json_encode(array("message" => "Hello, World!"));
     } else {
-        // If the token is incorrect, return a 401 Unauthorized response
+        http_response_code(401);
+        echo json_encode(array("message" => "Unauthorized"));
+    }
+} elseif ($path_info === $usersEndpoint) { // Check for the users endpoint
+    if ($token === "Bearer " . $expected_token) {
+        header("Content-Type: application/json");
+        
+        // Query to fetch all users from the database
+        $sql = "SELECT * FROM users";
+        $result = $conn->query($sql);
+        
+        $users = [];
+        if ($result->num_rows > 0) {
+            // output data of each row
+            while($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+            echo json_encode($users);
+        } else {
+            echo json_encode(array("message" => "No users found"));
+        }
+    } else {
         http_response_code(401);
         echo json_encode(array("message" => "Unauthorized"));
     }
@@ -37,3 +53,6 @@ if ($path_info === $endpoint) {
     http_response_code(404);
     echo json_encode(array("message" => "Endpoint not found"));
 }
+
+// Close the database connection
+$conn->close();
