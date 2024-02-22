@@ -1,11 +1,6 @@
 pipeline {
   agent any
 
-  parameters {
-    // Define a parameter to collect the value at the start of the build
-    string(name: 'AUTH_TOKEN', defaultValue: '', description: 'Enter the authorization token')
-  }
-
   stages {
     stage('Deploy PHP CODE') {
       steps {
@@ -15,14 +10,22 @@ pipeline {
         bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" -v"
       }
     }
+    stage('Ask for Auth Token') {
+      steps {
+        script {
+          // Prompt for the authorization token during the build
+          env.AUTH_TOKEN = input(id: 'userInput', message: 'Please enter the authorization token', parameters: [string(name: 'AUTH_TOKEN')])
+        }
+      }
+    }
     stage('Run postman collection') {
       steps {
         script {
           // If you want to run Newman, uncomment the following line and ensure the path and file name are correct
           // bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" run E:\\phpapi.postman_collection.json"
 
-          // Use the AUTH_TOKEN parameter in the curl command
-          bat "curl -X GET http://localhost:9002/dashboard/index.php/users -H \"Authorization: Bearer ${params.AUTH_TOKEN}\""
+          // Use the dynamically provided AUTH_TOKEN in the curl command
+          bat "curl -X GET http://localhost:9002/dashboard/index.php/users -H \"Authorization: Bearer ${env.AUTH_TOKEN}\""
         }
       }
     }
