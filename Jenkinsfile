@@ -17,7 +17,7 @@ pipeline {
                     // bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" run E:\\phpapi.postman_collection.json"
 
                     // Corrected curl command with proper double quotes escaping
-                    bat "curl -X GET http://localhost/dashboard/index.php/users -H \"Authorization: Bearer kally\""
+                    bat "curl -X GET http://localhost:9002/dashboard/index.php/users -H \"Authorization: Bearer kally\""
                 }
             }
         }
