@@ -14,7 +14,9 @@ pipeline {
             steps {
                 script {
                     // Running Newman with the full path and specifying the collection JSON file
-                    bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" run E:\\phpapi.postman_collection.json"
+                   // bat "\"C:\\Users\\Ankush Jindal\\AppData\\Roaming\\npm\\newman\" run E:\\phpapi.postman_collection.json"
+                   bat "curl -X GET http://localhost/dashboard/index.php/users -H "Authorization: Bearer kally" "
+
                 }
             }
         }
