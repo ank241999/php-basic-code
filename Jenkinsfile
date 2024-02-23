@@ -3,7 +3,7 @@ pipeline {
 
   parameters {
     choice(name: 'CHANGE_AUTH_TOKEN', choices: ['yes', 'no'], description: 'Do you want to change the Auth Token?')
- //   string(name: 'NEW_AUTH_TOKEN', defaultValue: 'kally', description: 'Enter the new authorization token')
+    string(name: 'NEW_AUTH_TOKEN', defaultValue: 'kally', description: 'Enter the new authorization token')
   }
 
   stages {
