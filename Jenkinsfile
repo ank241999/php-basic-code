@@ -2,8 +2,7 @@ pipeline {
   agent any
 
   parameters {
-    choice(name: 'CHANGE_AUTH_TOKEN', choices: ['yes', 'no'], description: 'Do you want to change the Auth Token?')
-    string(name: 'NEW_AUTH_TOKEN', defaultValue: 'kally', description: 'Enter the new authorization token')
+    string(name: 'NEW_AUTH_TOKEN', defaultValue: 'kally', description: 'Enter the new authorization token. Leave empty to not change.')
     // Example of adding more parameters
     string(name: 'PROJECT_NAME', defaultValue: 'MyProject', description: 'Enter your project name')
     booleanParam(name: 'ENABLE_LOGGING', defaultValue: true, description: 'Enable logging?')
@@ -14,16 +13,15 @@ pipeline {
       steps {
         script {
           // Example of reading and printing parameters
-          echo "CHANGE_AUTH_TOKEN: ${params.CHANGE_AUTH_TOKEN}"
           echo "NEW_AUTH_TOKEN: ${params.NEW_AUTH_TOKEN}"
           echo "PROJECT_NAME: ${params.PROJECT_NAME}"
           echo "ENABLE_LOGGING: ${params.ENABLE_LOGGING}"
 
           // Use the parameters in your logic
-          if (params.CHANGE_AUTH_TOKEN == 'yes') {
+          if (!params.NEW_AUTH_TOKEN.isEmpty()) {
             env.AUTH_TOKEN = params.NEW_AUTH_TOKEN
           } else {
-            env.AUTH_TOKEN = 'kally'
+            env.AUTH_TOKEN = 'defaultToken' // Use a default or existing token if NEW_AUTH_TOKEN is not provided
           }
 
           // Additional logic based on new parameters can be added here
